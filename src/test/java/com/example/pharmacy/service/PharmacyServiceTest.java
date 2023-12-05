@@ -1,20 +1,22 @@
-package com.example.pharmacy.repository;
+package com.example.pharmacy.service;
 
 import com.example.pharmacy.entity.Pharmacy;
+import com.example.pharmacy.repository.PharmacyRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class PharmacyRepositoryTest {
+class PharmacyServiceTest {
 
+    @Autowired
+    private PharmacyService pharmacyService;
     @Autowired
     private PharmacyRepository pharmacyRepository;
 
@@ -23,10 +25,12 @@ class PharmacyRepositoryTest {
         pharmacyRepository.deleteAll();
     }
 
+    @DisplayName("더티 체킹 OK")
     @Test
-    public void pharmacyRepositorySave() throws Exception {
+    public void dirtyCheckingTest() throws Exception{
         //given
         String address = "서울 특별시 성북구 종암동";
+        String modifiedAddress = "대전시";
         String name = "은혜 약국";
         double latitude = 36.11;
         double longitude = 128.11;
@@ -39,24 +43,26 @@ class PharmacyRepositoryTest {
                 .build();
 
         //when
-        Pharmacy save = pharmacyRepository.save(pharmacy);
+        Pharmacy entity = pharmacyRepository.save(pharmacy);
+        pharmacyService.updateAddress(entity.getId(), modifiedAddress);
+
+        List<Pharmacy> result = pharmacyRepository.findAll();
 
         //then
-        assertThat(save.getPharmacyAddress()).isEqualTo(address);
-        assertThat(save.getPharmacyName()).isEqualTo(name);
-        assertThat(save.getLatitude()).isEqualTo(latitude);
-        assertThat(save.getLongitude()).isEqualTo(longitude);
+        assertThat(result.get(0).getPharmacyAddress()).isEqualTo("대전시");
     }
 
+    @DisplayName("더티 체킹 No")
     @Test
-    public void pharmacySaveAll() throws Exception {
+    public void noDirtyCheckingTest() throws Exception{
         //given
         String address = "서울 특별시 성북구 종암동";
+        String modifiedAddress = "대전시";
         String name = "은혜 약국";
         double latitude = 36.11;
         double longitude = 128.11;
 
-        final Pharmacy pharmacy1 = Pharmacy.builder()
+        final Pharmacy pharmacy = Pharmacy.builder()
                 .pharmacyName(name)
                 .pharmacyAddress(address)
                 .latitude(latitude)
@@ -64,31 +70,12 @@ class PharmacyRepositoryTest {
                 .build();
 
         //when
-        pharmacyRepository.saveAll(List.of(pharmacy1));
+        Pharmacy entity = pharmacyRepository.save(pharmacy);
+        pharmacyService.updateAddressNoTransaction(entity.getId(), modifiedAddress);
+
         List<Pharmacy> result = pharmacyRepository.findAll();
 
         //then
-        assertThat(result.size()).isEqualTo(1);
-    }
-
-    @DisplayName("BaseTimeEntity(Auditing) 등록")
-    @Test
-    public void baseTimeTest() throws Exception {
-        //given
-        LocalDateTime now = LocalDateTime.now();
-        String address = "서울 특별시 성북구 종암동";
-        String name = "은혜 약국";
-
-        Pharmacy pharmacy = Pharmacy.builder()
-                .pharmacyName(name)
-                .pharmacyAddress(address)
-                .build();
-
-        //when
-        Pharmacy result = pharmacyRepository.save(pharmacy);
-
-        //then
-        assertThat(result.getCreatedDate()).isAfter(now);
-        assertThat(result.getModifiedDate()).isAfter(now);
+        assertThat(result.get(0).getPharmacyAddress()).isEqualTo(address);
     }
 }
