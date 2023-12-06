@@ -19,5 +19,6 @@ services:
       - MARIADB_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD} # 패스워드는 외부에 공개되면 안되므로 env파일에 설정, 별다른 설정없이 env파일이 있으면 알아서 가져온다.
     volumes:
       - ./database/config:/etc/mysql/conf.d
+      - ./database/init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
