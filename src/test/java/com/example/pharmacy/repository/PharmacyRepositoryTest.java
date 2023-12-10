@@ -1,6 +1,7 @@
 package com.example.pharmacy.repository;
 
 import com.example.pharmacy.entity.Pharmacy;
+import com.example.pharmacy.service.PharmacyService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

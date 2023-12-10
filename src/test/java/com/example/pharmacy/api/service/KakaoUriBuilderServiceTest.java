@@ -23,7 +23,7 @@ class KakaoUriBuilderServiceTest {
     @Test
     public void buildUriByAddressEncodeTest() throws Exception{
         //given
-        String address = "서울 성북구";
+        String address = "서울 성북구 종암로 10길";
 
         //when
         URI uri = kakaoUriBuilderService.buildUriByAddressSearch(address);
@@ -34,7 +34,7 @@ class KakaoUriBuilderServiceTest {
         System.out.println("인코딩 된 URI: " + uri);
         System.out.println("디코딩 된 URI: " + decode);
 
-        assertThat(decode).isEqualTo("https://dapi.kakao.com/v2/local/search/address.json?query=서울 성북구");
+        assertThat(decode).isEqualTo("https://dapi.kakao.com/v2/local/search/address.json?query=서울 성북구 종암로 10길");
     }
 
 }

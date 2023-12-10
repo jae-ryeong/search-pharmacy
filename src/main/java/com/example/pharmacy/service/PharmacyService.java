@@ -18,18 +18,19 @@ public class PharmacyService {
     private final PharmacyRepository pharmacyRepository;
 
     // self invocation test
+    //@Transactional
     public void bar(List<Pharmacy> pharmacyList) {
-        log.info("bar CurrentTransactionName: "+ TransactionSynchronizationManager.getCurrentTransactionName());    // 트랜잭션의 이름을 확인할 수 있다.
+        log.info("bar CurrentTransactionName: " + TransactionSynchronizationManager.getCurrentTransactionName());    // 트랜잭션의 이름을 확인할 수 있다.
         foo(pharmacyList);
     }
 
     // self invocation test
-    @Transactional
+    @Transactional()
     public void foo(List<Pharmacy> pharmacyList) {
-        log.info("foo CurrentTransactionName: "+ TransactionSynchronizationManager.getCurrentTransactionName());
+        log.info("foo CurrentTransactionName: " + TransactionSynchronizationManager.getCurrentTransactionName());
         pharmacyList.forEach(pharmacy -> {
             pharmacyRepository.save(pharmacy);
-            throw new RuntimeException("error");    // @Transactional은 runtime 예외가 발생하면 롤백한다.
+            //throw new RuntimeException("error");    // @Transactional은 runtime 예외가 발생하면 롤백한다.
         });
     }
 
@@ -61,5 +62,10 @@ public class PharmacyService {
         }
 
         entity.changePharmacyAddress(address);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Pharmacy> findAll() {
+        return pharmacyRepository.findAll();
     }
 }
