@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
@@ -25,6 +28,11 @@ public class KakaoAddressSearchService {
     private String kakaoRestApiKey;
 
     // 문자열 주소 기반 address를 입력받아서 -> 카카오 API 호출 -> 호출 받은 값 return
+    @Retryable(
+            retryFor = {RuntimeException.class}, // 런타임에러 발생시 retry
+            maxAttempts = 2,    // 2번까지 retry
+            backoff = @Backoff(delay = 2000)    // 2초 간격으로
+    )
     public KakaoApiResponseDto requestAddressSearch(String address) {
 
         if(ObjectUtils.isEmpty(address)) return null;   // validation 체크
@@ -39,5 +47,11 @@ public class KakaoAddressSearchService {
         // kakao api 호출
         return restTemplate.exchange(uri, HttpMethod.GET, httpEntity, KakaoApiResponseDto.class) // exchange는 httpEntity에 header를 담아서 전달한다, 마지막은 전달 받을 responseType
                 .getBody(); // 바디 부분만 필요 (없으면 에러)
+    }
+
+    @Recover
+    public KakaoApiResponseDto recover(RuntimeException e, String address) {
+        log.error("All the retries failed. address: {}, error: {}", address, e.getMessage());
+        return null;
     }
 }
