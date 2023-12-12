@@ -20,4 +20,10 @@ public class DocumentDto {   // https://developers.kakao.com/docs/latest/ko/loca
 
     @JsonProperty("x")
     private double longitude;
+
+    @JsonProperty("place_name")
+    private String placeName;
+
+    @JsonProperty("distance")
+    private double distance;
 }
