@@ -46,4 +46,20 @@ class KakaoAddressSearchServiceTest {
         assertThat(result.metaDto().totalCount()).isGreaterThan(0);
         assertThat(result.documentList().get(0).getAddressName()).isNotNull();
     }
+
+    @DisplayName("정상적인 주소를 입력했을 경우, 정삭적으로 위도 경도로 반환 된다.")
+    @Test
+    public void inputAddressTest() throws Exception{
+        //given
+        boolean actualResult = false;
+        String address = "서울 성북구 종암로 10길";
+        String nullAddress = "";
+        //when
+        KakaoApiResponseDto searchResult = kakaoAddressSearchService.requestAddressSearch(address);
+        KakaoApiResponseDto searchNullResult = kakaoAddressSearchService.requestAddressSearch(nullAddress);
+
+        //then
+        assertThat(searchResult.documentList().size()).isGreaterThan(0);
+        assertThat(searchNullResult).isNull();
+    }
 }
