@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
@@ -18,6 +18,31 @@
     }
 </style>
 <body>
+<div>
+    <h2 class="h2-title">Pharmacy Recommendation Results</h2>
+</div>
+
+<table class="table table-hover">
+    <tr>
+        <th>약국명</th>
+        <th>약국 주소</th>
+        <th>거리</th>
+        <th>길안내 링크</th>
+        <th>로드뷰 링크</th>
+    </tr>
+    <!--{{#each outputFormList}}-->
+    <tr th:each="output : ${outputFormList}">
+        <td th:text="${output.pharmacyName()}">{{pharmacyName}}</td>
+        <td th:text="${output.pharmacyAddress()}">{{pharmacyAddress}}</td>
+        <td th:text="${output.distance()}">{{distance}}</td>
+        <td th:href="${output.directionUrl()}">{{directionUrl}}</td>
+        <td th:href="${output.roadViewUrl()}">{{roadViewUrl}}</td>
+    </tr>
+    <!--{{/each}}-->
+</table>
+<div class="grid-image">
+    <img src="/images/kakao.png" alt="kakao" class="img-responsive img-rounded">
+</div>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
