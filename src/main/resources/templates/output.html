@@ -30,15 +30,17 @@
         <th>길안내 링크</th>
         <th>로드뷰 링크</th>
     </tr>
-    <!--{{#each outputFormList}}-->
     <tr th:each="output : ${outputFormList}">
         <td th:text="${output.pharmacyName()}">{{pharmacyName}}</td>
         <td th:text="${output.pharmacyAddress()}">{{pharmacyAddress}}</td>
         <td th:text="${output.distance()}">{{distance}}</td>
-        <td th:href="${output.directionUrl()}">{{directionUrl}}</td>
-        <td th:href="${output.roadViewUrl()}">{{roadViewUrl}}</td>
+        <td>
+            <a th:href="${output.directionUrl()}" th:text="${output.directionUrl()}">{{directionUrl}}</a>
+        </td>
+        <td>
+            <a th:href="${output.roadViewUrl()}" th:text="${output.roadViewUrl()}">{{roadViewUrl}}</a>
+        </td>
     </tr>
-    <!--{{/each}}-->
 </table>
 <div class="grid-image">
     <img src="/images/kakao.png" alt="kakao" class="img-responsive img-rounded">

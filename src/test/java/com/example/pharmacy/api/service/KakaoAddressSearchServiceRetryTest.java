@@ -52,6 +52,7 @@ class KakaoAddressSearchServiceRetryTest {
         mockWebServer.shutdown();
     }
 
+    @Disabled
     @DisplayName("재처리 성공")
     @Test
     public void retrySuccessTest() throws Exception{

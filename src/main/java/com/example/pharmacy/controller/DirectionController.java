@@ -15,22 +15,14 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class DirectionController {
 
     private final DirectionService directionService;
-    private static final String DIRECTION_BASE_URL = "https://map.kakao.com/link/map/";
+
 
     @GetMapping("/dir/{encodedId}")
     public String searchDirection(@PathVariable("encodedId") String encodedId) {    // shortenURL
         // encodedId는 인코딩 되어있으니 디코딩 해줘야한다.
+        String result = directionService.findDirectionUrlById(encodedId);
 
-        Direction resultDirection = directionService.findById(encodedId);
-
-        String params = String.join(",", resultDirection.getTargetPharmacyName(),
-                String.valueOf(resultDirection.getTargetLatitude()), String.valueOf(resultDirection.getTargetLongitude()));
-        // ex: 은혜약국,38.11,128.11
-
-        String result = UriComponentsBuilder.fromHttpUrl(DIRECTION_BASE_URL + params)
-                .toUriString();
-
-        log.info("direction params: {}, url: {}", params, result);
+        log.info("[DirectionController searchDirection] direction url: {}", result);
 
         return "redirect:" + result;
     }

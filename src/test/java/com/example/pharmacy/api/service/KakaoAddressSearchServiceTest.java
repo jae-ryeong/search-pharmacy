@@ -4,6 +4,7 @@ import com.example.pharmacy.api.dto.KakaoApiResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -12,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest // 통합테스트 이기 때문에 각자 테스트 실행하면 실패한다. (API키 환경 변수 없어서 그런듯)
 class KakaoAddressSearchServiceTest {
+
     @Autowired
     private KakaoAddressSearchService kakaoAddressSearchService;
 
