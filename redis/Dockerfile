@@ -1,3 +1,3 @@
-FROM redis:7
+FROM redis:6
 
 ENV TZ=Aisa/Seoul
