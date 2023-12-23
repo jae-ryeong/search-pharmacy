@@ -15,6 +15,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MariaDB103Dialect
 
+
 pharmacy:
   recommendation:
     base:

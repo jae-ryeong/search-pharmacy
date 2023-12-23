@@ -33,15 +33,17 @@ public class PharmacyRedisTemplateService {
     }
 
     public void save(PharmacyDto pharmacyDto) {
+        System.out.println("hashOperations = " + hashOperations);
         if (Objects.isNull(pharmacyDto) || Objects.isNull(pharmacyDto.id())) {
             log.error("Required Values muse not be null");
             return;
         }
 
         try {
-            redisTemplate.opsForHash().put(CACHE_KEY,
+            hashOperations.put(CACHE_KEY,
                     pharmacyDto.id().toString(),
                     serializePharmacyDto(pharmacyDto)); // JSON으로 변환
+            log.info("[PharmacyRedisTemplateService save success] id: {}", pharmacyDto.id());
         } catch (Exception e) {
             log.error("[PharmacyRedisTemplateService save error] {}", e.getMessage());
         }
@@ -65,6 +67,9 @@ public class PharmacyRedisTemplateService {
         hashOperations.delete(CACHE_KEY, String.valueOf(id));
         log.info("[PharmacyRedisTemplateService delete]: {} ", id);
     }
+
+    /*public void allDelete() {
+    }*/
 
     private String serializePharmacyDto(PharmacyDto pharmacyDto) throws JsonProcessingException {
         return objectMapper.writeValueAsString(pharmacyDto);    // json형태로 serialize
