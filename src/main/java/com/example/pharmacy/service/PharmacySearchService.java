@@ -1,5 +1,6 @@
 package com.example.pharmacy.service;
 
+import com.example.pharmacy.api.service.KakaoCategorySearchService;
 import com.example.pharmacy.cache.PharmacyRedisTemplateService;
 import com.example.pharmacy.dto.PharmacyDto;
 import com.example.pharmacy.entity.Pharmacy;
@@ -19,7 +20,6 @@ public class PharmacySearchService { // -> 약국 데이터 조회 -> 약국dto�
     private final PharmacyRedisTemplateService pharmacyRedisTemplateService;
 
     public List<PharmacyDto> searchPharmacyDtoList() {  // redis에서 먼저 조회 후 문제 발생시 db에서 조회
-
         // redis
         List<PharmacyDto> pharmacyDtoList = pharmacyRedisTemplateService.findAll();
         if(!pharmacyDtoList.isEmpty()) {

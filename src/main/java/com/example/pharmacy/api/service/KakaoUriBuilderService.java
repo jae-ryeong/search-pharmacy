@@ -29,7 +29,7 @@ public class KakaoUriBuilderService {
         double meterRadius = radius * 1000; // meter 단위
 
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(KAKAO_LOCAL_CATEGORY_SEARCH_URL);
-        uriBuilder.queryParam("category_group_codde", category);
+        uriBuilder.queryParam("category_group_code", category);
         uriBuilder.queryParam("x", longitude);
         uriBuilder.queryParam("y", latitude);
         uriBuilder.queryParam("radius", meterRadius);
