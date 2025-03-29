@@ -1,8 +1,6 @@
 package com.example.pharmacy.service;
 
 import com.example.pharmacy.api.dto.DocumentDto;
-import com.example.pharmacy.api.service.KakaoCategorySearchService;
-import com.example.pharmacy.dto.PharmacyDto;
 import com.example.pharmacy.entity.Direction;
 import com.example.pharmacy.repository.DirectionRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +10,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -29,7 +30,6 @@ public class DirectionService {
 
     private final PharmacySearchService pharmacySearchService;
     private final DirectionRepository directionRepository;
-    private final KakaoCategorySearchService kakaoCategorySearchService;
     private final Base62Service base62Service;
 
     @Transactional
@@ -38,12 +38,14 @@ public class DirectionService {
         return directionRepository.saveAll(directionList);
     }
 
+    //TODO: encodedId는 3PO일때 어떻게 작동하는지 확인
     public String findDirectionUrlById(String encodedId) {
         Long decodedId = base62Service.decodeDirectionId(encodedId);
         Direction direction = directionRepository.findById(decodedId).orElse(null);
 
         String params = String.join(",", direction.getTargetPharmacyName(),
                 String.valueOf(direction.getTargetLatitude()), String.valueOf(direction.getTargetLongitude()));
+        System.out.println("params = " + params);
         // ex: params = 은혜약국,38.11,128.11
 
         String result = UriComponentsBuilder.fromHttpUrl(DIRECTION_BASE_URL + params)
@@ -54,6 +56,7 @@ public class DirectionService {
         return result;
     }
 
+    // 공공 약국 데이터 저장 후 사용
     public List<Direction> buildDirectionList(DocumentDto documentDto) { // 약국 최대 3개 까지 추천
         // 약국 데이터 조회 후 거리계산 알고리즘을 이용하여, 고객과 약국 사이의 거리를 계산하고 sort
 
@@ -77,10 +80,11 @@ public class DirectionService {
                 .collect(Collectors.toList());
     }
 
+    // 공공 약국 데이터 저장하지 않고 사용
     public List<Direction> buildDirectionListByCategoryApi(DocumentDto inputDocumentDto) {
         if(Objects.isNull(inputDocumentDto)) return Collections.emptyList();
 
-        return kakaoCategorySearchService
+        return pharmacySearchService
                 .requestPharmacyCategorySearch(inputDocumentDto.getLatitude(), inputDocumentDto.getLongitude(), RADIUS_KM)
                 .documentList()
                 .stream().map(resultDocumentDto ->

@@ -57,7 +57,6 @@ public class PharmacyRecommendationService {
                 .map(t -> convertToOutputDto(t))
                 .collect(Collectors.toList());
 
-        System.out.println("address = " + address);
         pharmacyRedisTemplateService.savePharmacy(address, outputResult);
 
 
