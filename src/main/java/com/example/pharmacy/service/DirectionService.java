@@ -44,7 +44,7 @@ public class DirectionService {
 
         String params = String.join(",", direction.getTargetPharmacyName(),
                 String.valueOf(direction.getTargetLatitude()), String.valueOf(direction.getTargetLongitude()));
-        // ex: 은혜약국,38.11,128.11
+        // ex: params = 은혜약국,38.11,128.11
 
         String result = UriComponentsBuilder.fromHttpUrl(DIRECTION_BASE_URL + params)
                 .toUriString();
@@ -75,8 +75,6 @@ public class DirectionService {
                 .sorted(Comparator.comparing(Direction::getDistance))   // 거리를 기준으로 오름차순
                 .limit(MAX_SEARCH_COUNT) // 최대 3개까지만
                 .collect(Collectors.toList());
-
-
     }
 
     public List<Direction> buildDirectionListByCategoryApi(DocumentDto inputDocumentDto) {

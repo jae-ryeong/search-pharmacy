@@ -1,7 +1,9 @@
 package com.example.pharmacy.cache;
 
+import com.example.pharmacy.dto.OutputDto;
 import com.example.pharmacy.dto.PharmacyDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -68,11 +71,35 @@ public class PharmacyRedisTemplateService {
         log.info("[PharmacyRedisTemplateService delete]: {} ", id);
     }
 
-    /*public void allDelete() {
-    }*/
+    public void savePharmacy(String address, List<OutputDto> outputDto) {
+        try {
+            String serializeOutputDto = serializeOutputDto(outputDto);
+            redisTemplate.opsForValue().set(address, serializeOutputDto, 60, TimeUnit.MINUTES); // 거리 가까운 3군데 1시간동안 redis 저장
+        } catch (Exception e) {
+            log.error("[PharmacyRedisTemplateService savePharmacy error] {}", e.getMessage());
+        }
+    }
+
+    public List<OutputDto> findByAddress(String address) {
+        String result = (String) redisTemplate.opsForValue().get(address);
+        System.out.println("result = " + result);
+
+        try{
+            List<OutputDto> outputDtos = objectMapper.readValue(result, new TypeReference<List<OutputDto>>() {
+            });
+            return outputDtos;
+        }catch (Exception e){
+            log.error("[PharmacyRedisTemplateService findByAddress error] {}", e.getMessage());
+            return Collections.emptyList();
+        }
+    }
 
     private String serializePharmacyDto(PharmacyDto pharmacyDto) throws JsonProcessingException {
         return objectMapper.writeValueAsString(pharmacyDto);    // json형태로 serialize
+    }
+
+    private String serializeOutputDto(List<OutputDto> outputDto) throws JsonProcessingException {
+        return objectMapper.writeValueAsString(outputDto);
     }
 
     private PharmacyDto deserializePharmacyDto(String value) throws JsonProcessingException {  // json을 dto로 deserialize
