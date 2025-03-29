@@ -8,6 +8,8 @@ services:
     image: wofud/pharmacy-recommendation-redis
     ports:
       - "6379:6379"
+    networks:
+      - pharmacy_network
   pharmacy-recommendation-database: # 서비스명
     container_name: pharmacy-recommendation-database
     build:
@@ -22,3 +24,5 @@ services:
       - ./database/init:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
+    networks:
+      - pharmacy_network
